@@ -2,11 +2,11 @@
 //余弦精确度
 #define cosPrecision  0.685
 //小矩形最大相差的面积差
-#define maxReduceArea 2500
+#define maxReduceArea 4000
 //大图转化的图片大小
 #define imgThreshold  550
 //正方形的精度
-#define squarePrecision 5
+#define squarePrecision 10
 #include <opencv2/opencv.hpp>  
 #include<opencv2/highgui/highgui.hpp>  
 #include<opencv2/imgproc/imgproc.hpp>  
@@ -35,7 +35,13 @@ vector<vector<Point> > contours;
 vector<vector<Point> > contours2;
 vector<Vec4i> hierarchy;
 void init();
-string itos(int i);  // 将int 转换成string 
+string itos(int i) // 将int 转换成string 
+{
+	stringstream s;
+	s.clear();
+	s << i;
+	return s.str();
+}  // 将int 转换成string 
 double getDistance(double x1, double y1, double x2, double y2);
 void getRectHier5(Mat img);//层次大于5的矩形框
 int getArea(RotatedRect rect);//获得矩形面积
@@ -100,7 +106,7 @@ int main()
 		findContours(src_gray, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_SIMPLE);
 		getRectHier5(src);
 		showSmallRect(src);
-		if (contours2.size()>3)
+		if (contours2.size()>0)
 			removeRect();
 		getMaxLargeRect();
 		cout << "*******************当前图片为: " << cou << "****************" << endl;
@@ -168,26 +174,34 @@ RotatedRect getMaxLargeRect()
 		rectResult.points(vertices);
 		for (int i = 0; i < 4; i++)
 			line(imcopy, vertices[i], vertices[(i + 1) % 4], Scalar(0, 255, 0), 3);
-		imshow("", imcopy);
-		waitKey();
-		imwrite(writePath, imcopy);
+		
+		
 	}
+	//imshow("", imcopy);
+	imwrite(writePath, imcopy);
+	waitKey();
+	
 	return rectResult;
 }
 bool isCurrentSmallRect(RotatedRect rect1, RotatedRect rect2, RotatedRect rect3)
 {
 	double cosValue1, cosValue2, cosValue = getCosine(rect1.center, rect2.center, rect3.center);
-	double distance1 = getDistance(rect1.center.x, rect1.center.y, rect2.center.x, rect2.center.y);
-	double distance2 = getDistance(rect1.center.x, rect1.center.y, rect3.center.x, rect3.center.y);
+	double area1 = abs(getArea(rect1) - getArea(rect2));
+	double area2 = abs(getArea(rect1) - getArea(rect3));
+	//对中心进行划线进行定位
+	/*Mat imcopy;
+	src.copyTo(imcopy);
+	line(imcopy,rect1.center,rect2.center,Scalar(0,255,234),3);
+	line(imcopy, rect1.center, rect3.center, Scalar(0, 255, 0), 3);
+	imshow("",imcopy);
+	imwrite(writePath,imcopy);
+	waitKey();*/
 	if (abs(rect1.size.height - rect1.size.width) > squarePrecision ||
 		abs(rect2.size.height - rect2.size.width) > squarePrecision ||
 		abs(rect3.size.height - rect3.size.width) > squarePrecision)
 		return false;//如果有一个不是正方形则退出
-	else if (abs(getArea(rect1) - getArea(rect2)) > maxReduceArea || abs(getArea(rect1) - getArea(rect3)) > maxReduceArea)
+	else if (area1 > maxReduceArea || area2 > maxReduceArea)
 		return false;//两个矩形面积相差过大，不可能小矩形
-	else if ((distance1 <= 3 * rect1.size.width / 2 || distance1 >= 3.5 * rect1.size.height / 2) ||
-		(distance2 <= 3 * rect1.size.width / 2 || distance2 >= 3.5 * rect1.size.height / 2))
-		return false;//通过距离判定是否是正确的小矩形
 	else if (abs(abs(cosValue) - cos(M_PI / 2)) < cosPrecision)
 	{
 		cosValue1 = getCosine(rect2.center, rect1.center, rect3.center);
@@ -273,14 +287,6 @@ void init()
 	contours2.clear();
 	hierarchy.clear();
 }
-string itos(int i) // 将int 转换成string 
-{
-	stringstream s;
-	s.clear();
-	s << i;
-	return s.str();
-}
-
 double getDistance(double x1, double y1, double x2, double y2)
 {
 	return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
