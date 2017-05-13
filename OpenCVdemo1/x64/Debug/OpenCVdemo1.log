@@ -4,7 +4,7 @@ d:\opencv\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: 该
 d:\opencv\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\opencv\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 d:\opencv\opencv\build\include\opencv2\imgproc.hpp(592): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-d:\桌面\workspace\opencv\学习实例\opencvdemo1 by浅墨\opencvdemo1\opencvdemo1\main.cpp(89): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
-d:\桌面\workspace\opencv\学习实例\opencvdemo1 by浅墨\opencvdemo1\opencvdemo1\main.cpp(269): warning C4244: “return”: 从“float”转换到“int”，可能丢失数据
+d:\桌面\workspace\opencv\学习实例\opencvdemo1 by浅墨\opencvdemo1\opencvdemo1\main.cpp(90): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+d:\桌面\workspace\opencv\学习实例\opencvdemo1 by浅墨\opencvdemo1\opencvdemo1\main.cpp(274): warning C4244: “return”: 从“float”转换到“int”，可能丢失数据
   OpenCVdemo1.vcxproj -> D:\桌面\workspace\opencv\学习实例\OpenCVdemo1 by浅墨\OpenCVdemo1\x64\Debug\OpenCVdemo1.exe
   OpenCVdemo1.vcxproj -> D:\桌面\workspace\opencv\学习实例\OpenCVdemo1 by浅墨\OpenCVdemo1\x64\Debug\OpenCVdemo1.pdb (Full PDB)

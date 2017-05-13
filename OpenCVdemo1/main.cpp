@@ -1,11 +1,11 @@
 #define M_PI 3.14159265358979323846
-//ÓàÏÒ¾«È·¶È
+//ä½™å¼¦ç²¾ç¡®åº¦
 #define cosPrecision  0.685
-//Ğ¡¾ØĞÎ×î´óÏà²îµÄÃæ»ı²î
+//å°çŸ©å½¢æœ€å¤§ç›¸å·®çš„é¢ç§¯å·®
 #define maxReduceArea 2500
-//´óÍ¼×ª»¯µÄÍ¼Æ¬´óĞ¡
+//å¤§å›¾è½¬åŒ–çš„å›¾ç‰‡å¤§å°
 #define imgThreshold  550
-//Õı·½ĞÎµÄ¾«¶È
+//æ­£æ–¹å½¢çš„ç²¾åº¦
 #define squarePrecision 5
 #include <opencv2/opencv.hpp>  
 #include<opencv2/highgui/highgui.hpp>  
@@ -18,31 +18,32 @@
 #include<iostream>
 using namespace cv;
 using namespace std;
-int cou = 6;//³õÊ¼ÎÄ¼ş
-int imgNumber = 7;//¶ÁÎÄ¼şµÄ¸öÊı
-string imgRootPath = "D:/×ÀÃæ/workspace/Ê¶±ğ¶şÎ¬Âë/¶şÎ¬Âë/";
-string imgRootWritePath = "D:/×ÀÃæ/workspace/opencv/ËØ²Ä/¶şÎ¬Âë²âÊÔ/½á¹û/";
-string imgRootSWritePath = "D:/×ÀÃæ/workspace/opencv/ËØ²Ä/¶şÎ¬Âë²âÊÔ/Ğ¡¾ØĞÎ/";
-string imgPath,writePath,writeSmallPath;
+int cou = 0;//åˆå§‹æ–‡ä»¶
+int imgNumber = 44;//è¯»æ–‡ä»¶çš„ä¸ªæ•°
+string imgRootPath = "D:/æ¡Œé¢/workspace/è¯†åˆ«äºŒç»´ç /äºŒç»´ç /";
+string imgRootWritePath = "D:/æ¡Œé¢/workspace/opencv/ç´ æ/äºŒç»´ç æµ‹è¯•/ç»“æœ/";
+string imgRootSWritePath = "D:/æ¡Œé¢/workspace/opencv/ç´ æ/äºŒç»´ç æµ‹è¯•/å°çŸ©å½¢/";
+string imgPath, writePath, writeSmallPath;
 Mat src;
 Mat  src_gray;
-string str;//½«ÕûĞÎ×ª»»³Échar
-double fScale = 1;      //Ëõ·Å±¶Êı  
-double fScale1 = 1;      //Ëõ·Å±¶Êı
+string str;//å°†æ•´å½¢è½¬æ¢æˆchar
+double fScale = 1;      //ç¼©æ”¾å€æ•°  
+double fScale1 = 1;      //ç¼©æ”¾å€æ•°
 vector<vector<Point> > smallRectCons;
 vector<Point2f> point_all;
 vector<vector<Point> > contours;
 vector<vector<Point> > contours2;
 vector<Vec4i> hierarchy;
 void init();
-string itos(int i);  // ½«int ×ª»»³Éstring 
-void getRectHier5(Mat img);//²ã´Î´óÓÚ5µÄ¾ØĞÎ¿ò
-int getArea(RotatedRect rect);//»ñµÃ¾ØĞÎÃæ»ı
-void showSmallRect(Mat img);//ÏÔÊ¾ËùÓĞµÄĞ¡¾ØĞÎ
-bool isCurrentSmallRect(RotatedRect rect1, RotatedRect rect2, RotatedRect rect3);//ÅĞ¶ÏÊÇ·ñÎªÏëÒªµÄĞ¡¾ØĞÎ
+string itos(int i);  // å°†int è½¬æ¢æˆstring 
+double getDistance(double x1, double y1, double x2, double y2);
+void getRectHier5(Mat img);//å±‚æ¬¡å¤§äº5çš„çŸ©å½¢æ¡†
+int getArea(RotatedRect rect);//è·å¾—çŸ©å½¢é¢ç§¯
+void showSmallRect(Mat img);//æ˜¾ç¤ºæ‰€æœ‰çš„å°çŸ©å½¢
+bool isCurrentSmallRect(RotatedRect rect1, RotatedRect rect2, RotatedRect rect3);//åˆ¤æ–­æ˜¯å¦ä¸ºæƒ³è¦çš„å°çŸ©å½¢
 RotatedRect getMaxLargeRect();
-double getCosine(Point2f p1, Point2f p2, Point2f p3);//ÏòÁ¿p1ÒıÏòp2,p3µÄÓàÏÒÖµ
-void removeRect();//È¥³ı¸ÉÈÅ¾ØĞÎ
+double getCosine(Point2f p1, Point2f p2, Point2f p3);//å‘é‡p1å¼•å‘p2,p3çš„ä½™å¼¦å€¼
+void removeRect();//å»é™¤å¹²æ‰°çŸ©å½¢
 void text()
 {
 	Mat image(200, 200, CV_8UC3, Scalar(0));
@@ -60,14 +61,14 @@ int main()
 {
 
 	CvMemStorage * storage = cvCreateMemStorage(0);
-	
+
 	while (cou++<imgNumber)
 	{
 		init();
 		if (cou < 10)
 		{
 			writeSmallPath = imgRootSWritePath + "DSC_000" + itos(cou) + ".jpg";
-			imgPath = imgRootPath + "DSC_000"+itos(cou)+".JPG";
+			imgPath = imgRootPath + "DSC_000" + itos(cou) + ".JPG";
 			writePath = imgRootWritePath + "DSC_000" + itos(cou) + ".jpg";
 		}
 		else if (cou < 100)
@@ -76,7 +77,7 @@ int main()
 			writeSmallPath = imgRootSWritePath + "DSC_00" + itos(cou) + ".jpg";
 			writePath = imgRootWritePath + "DSC_00" + itos(cou) + ".jpg";
 		}
-		
+
 		src = imread(imgPath);
 		if (!src.data)
 			return -1;
@@ -86,25 +87,25 @@ int main()
 			double modNum = minNum / imgThreshold;
 			fScale = 1 / modNum;
 		}
-		resize(src, src, Size(src.cols*fScale, src.rows*fScale));//Ëõ·Å
+		resize(src, src, Size(src.cols*fScale, src.rows*fScale));//ç¼©æ”¾
 
-		//imshow("¡¾Ô­Ê¼Í¼¡¿Canny±ßÔµ¼ì²â", src);//ÏÔÊ¾Ô­Ê¼Í¼
-									  //¡¾4¡¿×ª»»Îª»Ò¶ÈÍ¼  
-		cvtColor(src, src_gray, CV_RGB2GRAY);
-		//¡¾3¡¿Ê¹ÓÃ¸ßË¹ÂË²¨Ïû³ıÔëÉù  
+																 //imshow("ã€åŸå§‹å›¾ã€‘Cannyè¾¹ç¼˜æ£€æµ‹", src);//æ˜¾ç¤ºåŸå§‹å›¾
+
+		cvtColor(src, src_gray, CV_RGB2GRAY); //ã€4ã€‘è½¬æ¢ä¸ºç°åº¦å›¾  
+											  //ã€3ã€‘ä½¿ç”¨é«˜æ–¯æ»¤æ³¢æ¶ˆé™¤å™ªå£°  
 		GaussianBlur(src_gray, src_gray, Size(3, 3), 0);
 		//blur(src_gray, src_gray, Size(3, 3));
 		Canny(src_gray, src_gray, 100, 250);
-		//imshow("¸ßË¹È¥Ôëcanny±ßÔµËã·¨", src_gray);
+		//imshow("é«˜æ–¯å»å™ªcannyè¾¹ç¼˜ç®—æ³•", src_gray);
 		findContours(src_gray, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_SIMPLE);
 		getRectHier5(src);
 		showSmallRect(src);
 		if (contours2.size()>3)
 			removeRect();
 		getMaxLargeRect();
-		cout << "*******************µ±Ç°Í¼Æ¬Îª: " << cou << "****************" << endl;
+		cout << "*******************å½“å‰å›¾ç‰‡ä¸º: " << cou << "****************" << endl;
 	}
-	
+
 	return 0;
 }
 void getRectHier5(Mat img)
@@ -130,13 +131,13 @@ void getRectHier5(Mat img)
 			parentIdx = -1;
 		}
 
-		if (ic >= 3&&parentIdx!=-1)
+		if (ic >= 3 && parentIdx != -1)
 		{
 			contours2.push_back(contours[parentIdx]);
-			//cout << parentIdx << " " << endl;
+			cout << parentIdx << " " << endl;
 			/*
 			drawContours(imgCopy, contours, parentIdx, (0, 0, 255), 3);
-			imshow("Ğ¡¾ØĞÎ", imgCopy);
+			imshow("å°çŸ©å½¢", imgCopy);
 			waitKey();
 			*/
 			//parentIdx = -1;
@@ -151,7 +152,7 @@ void showSmallRect(Mat img)
 	img.copyTo(imgCopy);
 	for (int i = 0; i<contours2.size(); i++)
 		drawContours(imgCopy, contours2, i, (0, 0, 255), 3);
-	//imshow("Ğ¡¾ØĞÎ", imgCopy);
+	//imshow("å°çŸ©å½¢", imgCopy);
 	imwrite(writeSmallPath, imgCopy);
 	//waitKey();
 }
@@ -159,7 +160,7 @@ RotatedRect getMaxLargeRect()
 {
 	Mat imcopy;
 	src.copyTo(imcopy);
-	//×îĞ¡°üÎ§ºĞ
+	//æœ€å°åŒ…å›´ç›’
 	RotatedRect rect, rectResult;
 	Point2f vertices[4];
 	for (int i = 0; i < smallRectCons.size(); i++)
@@ -184,13 +185,17 @@ RotatedRect getMaxLargeRect()
 bool isCurrentSmallRect(RotatedRect rect1, RotatedRect rect2, RotatedRect rect3)
 {
 	double cosValue1, cosValue2, cosValue = getCosine(rect1.center, rect2.center, rect3.center);
-	
-	if (abs(rect1.size.height - rect1.size.width) > squarePrecision||
-		abs(rect2.size.height - rect2.size.width) > squarePrecision|| 
+	double distance1 = getDistance(rect1.center.x, rect1.center.y, rect2.center.x, rect2.center.y);
+	double distance2 = getDistance(rect1.center.x, rect1.center.y, rect3.center.x, rect3.center.y);
+	if (abs(rect1.size.height - rect1.size.width) > squarePrecision ||
+		abs(rect2.size.height - rect2.size.width) > squarePrecision ||
 		abs(rect3.size.height - rect3.size.width) > squarePrecision)
-		return false;//Èç¹ûÓĞÒ»¸ö²»ÊÇÕı·½ĞÎÔòÍË³ö
-	else if (abs(getArea(rect1) - getArea(rect2))>maxReduceArea || abs(getArea(rect1) - getArea(rect3))>maxReduceArea)
-		return false;//Á½¸ö¾ØĞÎÃæ»ıÏà²î¹ı´ó£¬²»¿ÉÄÜĞ¡¾ØĞÎ
+		return false;//å¦‚æœæœ‰ä¸€ä¸ªä¸æ˜¯æ­£æ–¹å½¢åˆ™é€€å‡º
+	else if (abs(getArea(rect1) - getArea(rect2)) > maxReduceArea || abs(getArea(rect1) - getArea(rect3)) > maxReduceArea)
+		return false;//ä¸¤ä¸ªçŸ©å½¢é¢ç§¯ç›¸å·®è¿‡å¤§ï¼Œä¸å¯èƒ½å°çŸ©å½¢
+	else if ((distance1 <= 3 * rect1.size.width / 2 || distance1 >= 3.5 * rect1.size.height / 2) ||
+		(distance2 <= 3 * rect1.size.width / 2 || distance2 >= 3.5 * rect1.size.height / 2))
+		return false;//é€šè¿‡è·ç¦»åˆ¤å®šæ˜¯å¦æ˜¯æ­£ç¡®çš„å°çŸ©å½¢
 	else if (abs(abs(cosValue) - cos(M_PI / 2)) < cosPrecision)
 	{
 		cosValue1 = getCosine(rect2.center, rect1.center, rect3.center);
@@ -210,7 +215,7 @@ void removeRect()
 {
 	RotatedRect rect1, rect2, rect3;
 	int flag;
-	//±éÀúÂÖÀª,Ã¿¸öÂÖÀª¶¼ÓëÆäËûÂÖÀª×éºÏ
+	//éå†è½®å»“,æ¯ä¸ªè½®å»“éƒ½ä¸å…¶ä»–è½®å»“ç»„åˆ
 	for (int i = 0; i < contours2.size(); i++)
 	{
 		flag = 0;
@@ -237,7 +242,7 @@ void removeRect()
 				break;
 		}
 	}
-	if (contours2.size() > 0&&smallRectCons.size()>1)
+	if (contours2.size() > 0 && smallRectCons.size()>1)
 	{
 		for (int i = 0; i < contours2.size(); i++)
 		{
@@ -255,12 +260,12 @@ void removeRect()
 double getCosine(Point2f p1, Point2f p2, Point2f p3)
 {
 	double x1, x2, y1, y2;
-	//»ñÈ¡Á½¸ö±ßµÄÏòÁ¿×ø±ê£¬×ø±êÖĞĞÄÎªp1
+	//è·å–ä¸¤ä¸ªè¾¹çš„å‘é‡åæ ‡ï¼Œåæ ‡ä¸­å¿ƒä¸ºp1
 	x1 = p2.x - p1.x;
 	x2 = p3.x - p1.x;
 	y1 = p2.y - p1.y;
 	y2 = p3.y - p1.y;
-	//¼ÆËãÓëÓàÏÒ
+	//è®¡ç®—ä¸ä½™å¼¦
 	double cosine = (x1*x2 + y1*y2) / (sqrt(x1*x1 + y1*y1) * sqrt(x2*x2 + y2*y2) + 1e-10);
 	return (x1*x2 + y1*y2) / (sqrt(x1*x1 + y1*y1) * sqrt(x2*x2 + y2*y2) + 1e-10);
 }
@@ -276,10 +281,15 @@ void init()
 	contours2.clear();
 	hierarchy.clear();
 }
-string itos(int i) // ½«int ×ª»»³Éstring 
+string itos(int i) // å°†int è½¬æ¢æˆstring 
 {
 	stringstream s;
 	s.clear();
 	s << i;
 	return s.str();
+}
+
+double getDistance(double x1, double y1, double x2, double y2)
+{
+	return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
 }
