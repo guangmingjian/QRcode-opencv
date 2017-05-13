@@ -2,7 +2,7 @@
 //余弦精确度
 #define cosPrecision  0.685
 //小矩形最大相差的面积差
-#define maxReduceArea 550
+#define maxReduceArea 2500
 //大图转化的图片大小
 #define imgThreshold  550
 //正方形的精度
@@ -18,8 +18,8 @@
 #include<iostream>
 using namespace cv;
 using namespace std;
-int cou = 0;//初始文件
-int imgNumber = 44;//读文件的个数
+int cou = 6;//初始文件
+int imgNumber = 7;//读文件的个数
 string imgRootPath = "D:/桌面/workspace/识别二维码/二维码/";
 string imgRootWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/结果/";
 string imgRootSWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/小矩形/";
@@ -66,12 +66,14 @@ int main()
 		init();
 		if (cou < 10)
 		{
+			writeSmallPath = imgRootSWritePath + "DSC_000" + itos(cou) + ".jpg";
 			imgPath = imgRootPath + "DSC_000"+itos(cou)+".JPG";
 			writePath = imgRootWritePath + "DSC_000" + itos(cou) + ".jpg";
 		}
 		else if (cou < 100)
 		{
 			imgPath = imgRootPath + "DSC_00" + itos(cou) + ".JPG";
+			writeSmallPath = imgRootSWritePath + "DSC_00" + itos(cou) + ".jpg";
 			writePath = imgRootWritePath + "DSC_00" + itos(cou) + ".jpg";
 		}
 		
@@ -100,8 +102,7 @@ int main()
 		if (contours2.size()>3)
 			removeRect();
 		getMaxLargeRect();
-		//text();
-		//waitKey(0);
+		cout << "*******************当前图片为: " << cou << "****************" << endl;
 	}
 	
 	return 0;
@@ -132,7 +133,7 @@ void getRectHier5(Mat img)
 		if (ic >= 3&&parentIdx!=-1)
 		{
 			contours2.push_back(contours[parentIdx]);
-			cout << parentIdx << " " << endl;
+			//cout << parentIdx << " " << endl;
 			/*
 			drawContours(imgCopy, contours, parentIdx, (0, 0, 255), 3);
 			imshow("小矩形", imgCopy);
@@ -150,14 +151,6 @@ void showSmallRect(Mat img)
 	img.copyTo(imgCopy);
 	for (int i = 0; i<contours2.size(); i++)
 		drawContours(imgCopy, contours2, i, (0, 0, 255), 3);
-	if (cou < 10)
-	{
-		writeSmallPath = imgRootSWritePath + "DSC_000" + itos(cou) + ".jpg";
-	}
-	else if (cou < 100)
-	{
-		writeSmallPath = imgRootSWritePath + "DSC_00" + itos(cou) + ".jpg";
-	}
 	//imshow("小矩形", imgCopy);
 	imwrite(writeSmallPath, imgCopy);
 	//waitKey();
@@ -182,8 +175,8 @@ RotatedRect getMaxLargeRect()
 		rectResult.points(vertices);
 		for (int i = 0; i < 4; i++)
 			line(imcopy, vertices[i], vertices[(i + 1) % 4], Scalar(0, 255, 0), 3);
-		/*imshow("", imcopy);
-		waitKey();*/
+		imshow("", imcopy);
+		waitKey();
 		imwrite(writePath, imcopy);
 	}
 	return rectResult;
@@ -243,7 +236,20 @@ void removeRect()
 			if (flag)
 				break;
 		}
-
+	}
+	if (contours2.size() > 0&&smallRectCons.size()>1)
+	{
+		for (int i = 0; i < contours2.size(); i++)
+		{
+			rect1 = minAreaRect(contours2[i]);
+			rect2 = minAreaRect(smallRectCons[0]);
+			rect3 = minAreaRect(smallRectCons[1]);
+			if (isCurrentSmallRect(rect1, rect2, rect3))
+			{
+				smallRectCons.push_back(contours2[i]);
+				//contours2.erase(contours2.begin() + i);
+			}
+		}
 	}
 }
 double getCosine(Point2f p1, Point2f p2, Point2f p3)
