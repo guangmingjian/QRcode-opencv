@@ -1,4 +1,4 @@
-#define M_PI 3.14159265358979323846
+﻿#define M_PI 3.14159265358979323846
 //余弦精确度
 #define cosPrecision  0.685
 //小矩形最大相差的面积差
@@ -18,7 +18,7 @@
 #include<iostream>
 using namespace cv;
 using namespace std;
-int cou = 0;//初始文件
+int cou =0;//初始文件
 int imgNumber = 44;//读文件的个数
 string imgRootPath = "D:/桌面/workspace/识别二维码/二维码/";
 string imgRootWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/结果/";
@@ -127,21 +127,13 @@ void getRectHier5(Mat img)
 		}
 		else if (hierarchy[i][2] == -1)
 		{
+			if (ic >= 3 && parentIdx != -1)
+			{
+				contours2.push_back(contours[parentIdx]);
+				cout << parentIdx << " " << endl;
+			}
 			ic = 0;
 			parentIdx = -1;
-		}
-
-		if (ic >= 3 && parentIdx != -1)
-		{
-			contours2.push_back(contours[parentIdx]);
-			cout << parentIdx << " " << endl;
-			/*
-			drawContours(imgCopy, contours, parentIdx, (0, 0, 255), 3);
-			imshow("小矩形", imgCopy);
-			waitKey();
-			*/
-			//parentIdx = -1;
-			counter++;
 		}
 
 	}
@@ -242,7 +234,7 @@ void removeRect()
 				break;
 		}
 	}
-	if (contours2.size() > 0 && smallRectCons.size()>1)
+	if (contours2.size() >= 0 && smallRectCons.size()>1)
 	{
 		for (int i = 0; i < contours2.size(); i++)
 		{

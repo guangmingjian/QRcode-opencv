@@ -144,6 +144,9 @@
   <ItemGroup>
     <Image Include="C:\Users\ADMINI~1\AppData\Local\Temp\Lena-1.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tools.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
