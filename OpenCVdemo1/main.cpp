@@ -18,7 +18,7 @@
 #include<iostream>
 using namespace cv;
 using namespace std;
-int cou =0;//初始文件
+int cou = 0;//初始文件
 int imgNumber = 44;//读文件的个数
 string imgRootPath = "D:/桌面/workspace/识别二维码/二维码/";
 string imgRootWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/结果/";
@@ -174,13 +174,13 @@ RotatedRect getMaxLargeRect()
 		rectResult.points(vertices);
 		for (int i = 0; i < 4; i++)
 			line(imcopy, vertices[i], vertices[(i + 1) % 4], Scalar(0, 255, 0), 3);
-		
-		
+
+
 	}
 	//imshow("", imcopy);
 	imwrite(writePath, imcopy);
 	waitKey();
-	
+
 	return rectResult;
 }
 bool isCurrentSmallRect(RotatedRect rect1, RotatedRect rect2, RotatedRect rect3)
