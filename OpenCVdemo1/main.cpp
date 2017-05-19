@@ -4,7 +4,7 @@
 //小矩形最大相差的面积差
 #define maxReduceArea 4000
 //大图转化的图片大小
-#define imgThreshold  550
+#define imgThreshold  780
 //正方形的精度
 #define squarePrecision 10
 #include <opencv2/opencv.hpp>  
@@ -19,7 +19,7 @@
 using namespace cv;
 using namespace std;
 int cou = 0;//初始文件
-int imgNumber = 44;//读文件的个数
+int imgNumber =44;//读文件的个数
 string imgRootPath = "D:/桌面/workspace/识别二维码/二维码/";
 string imgRootWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/结果/";
 string imgRootSWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/小矩形/";
@@ -98,10 +98,16 @@ int main()
 		resize(src, src, Size(src.cols*fScale, src.rows*fScale));//缩放
 
 																 //imshow("【原始图】Canny边缘检测", src);//显示原始图
-
+		int blockSize = 25;
+		int constValue = 5;
+		
 		cvtColor(src, src_gray, CV_RGB2GRAY); //【4】转换为灰度图  
-											  //【3】使用高斯滤波消除噪声  
+											  //【3】使用高斯滤波消除噪声 
+		Mat local;
+		adaptiveThreshold(src_gray, src_gray, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY_INV, blockSize, constValue);
+		//imshow("D:/桌面/workspace/opencv/素材/二维码测试/1.jpg", src_gray);
 		GaussianBlur(src_gray, src_gray, Size(3, 3), 0);
+
 		Canny(src_gray, src_gray, 100, 250);
 		//imshow("高斯去噪canny边缘算法", src_gray);
 		findContours(src_gray, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_SIMPLE);
