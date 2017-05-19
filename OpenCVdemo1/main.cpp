@@ -24,8 +24,10 @@ string imgRootPath = "D:/桌面/workspace/识别二维码/二维码/";
 string imgRootWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/结果/";
 string imgRootSWritePath = "D:/桌面/workspace/opencv/素材/二维码测试/小矩形/";
 string imgPath, writePath, writeSmallPath;
-Mat src;
-Mat  src_gray;
+Mat src, src_gray, grad;
+int scale = 1;
+int delta = 0;
+int ddepth = CV_16S;
 string str;//将整形转换成char
 double fScale = 1;      //缩放倍数  
 double fScale1 = 1;      //缩放倍数
@@ -100,7 +102,6 @@ int main()
 		cvtColor(src, src_gray, CV_RGB2GRAY); //【4】转换为灰度图  
 											  //【3】使用高斯滤波消除噪声  
 		GaussianBlur(src_gray, src_gray, Size(3, 3), 0);
-		//blur(src_gray, src_gray, Size(3, 3));
 		Canny(src_gray, src_gray, 100, 250);
 		//imshow("高斯去噪canny边缘算法", src_gray);
 		findContours(src_gray, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_SIMPLE);
